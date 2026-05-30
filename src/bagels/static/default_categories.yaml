@@ -1,0 +1,140 @@
+- name: Food # 1
+  color: orange_red1
+  nature: NEED
+  subcategories:
+    - name: Groceries # 2
+      nature: MUST
+    - name: Restaurants # 3
+      nature: NEED
+    - name: Takeout # 4
+      nature: WANT
+    - name: Snacks # 5
+      nature: WANT
+
+- name: Transport # 6
+  color: grey63
+  nature: MUST
+  subcategories:
+    - name: Public Transport # 7
+      nature: MUST
+    - name: Taxi # 8
+      nature: NEED
+    - name: Ride Share # 9
+      nature: NEED
+
+- name: Shopping # 10
+  color: cyan
+  nature: WANT
+  subcategories:
+    - name: Clothing # 11
+      nature: NEED
+    - name: Electronics # 12
+      nature: NEED
+    - name: Home & Garden # 13
+      nature: WANT
+    - name: Gifts # 14
+      nature: WANT
+
+- name: Electronic & Communication # 15
+  color: dodger_blue3
+  nature: NEED
+  subcategories:
+    - name: Phone Bill # 16
+      nature: MUST
+    - name: Internet # 17
+      nature: MUST
+    - name: Streaming Services # 18
+      nature: WANT
+    - name: Software Subscriptions # 19
+      nature: NEED
+
+- name: Vehicle # 20
+  color: hot_pink
+  nature: WANT
+  subcategories:
+    - name: Fuel # 21
+      nature: NEED
+    - name: Maintenance # 22
+      nature: NEED
+    - name: Insurance # 23
+      nature: NEED
+    - name: Parking # 24
+      nature: NEED
+
+- name: Life & Entertainment # 25
+  color: green3
+  nature: WANT
+  subcategories:
+    - name: Movies # 26
+      nature: WANT
+    - name: Sports # 27
+      nature: WANT
+    - name: Hobbies # 28
+      nature: WANT
+    - name: Travel # 29
+      nature: WANT
+
+- name: Financial Expenses # 30
+  color: red3
+  nature: NEED
+  subcategories:
+    - name: Bank Fees # 31
+      nature: MUST
+    - name: Interest # 32
+      nature: MUST
+    - name: Investment Fees # 33
+      nature: NEED
+    - name: Taxes # 34
+      nature: MUST
+
+- name: Income # 35
+  color: yellow
+  nature: MUST
+  subcategories:
+    - name: Salary # 36
+      nature: MUST
+    - name: Bonus # 37
+      nature: MUST
+    - name: Investment Returns # 38
+      nature: MUST
+    - name: Side Income # 39
+      nature: MUST
+
+- name: Medical & Healthcare # 40
+  color: indian_red
+  nature: MUST
+  subcategories:
+    - name: Doctor # 41
+      nature: MUST
+    - name: Medication # 42
+      nature: MUST
+    - name: Insurance # 43
+      nature: MUST
+    - name: Dental # 44
+      nature: MUST
+
+- name: Education # 45
+  color: royal_blue1
+  nature: NEED
+  subcategories:
+    - name: Tuition # 46
+      nature: MUST
+    - name: Books # 47
+      nature: NEED
+    - name: Courses # 48
+      nature: WANT
+    - name: Training # 49
+      nature: WANT
+
+- name: Housing # 50
+  color: medium_orchid3
+  nature: MUST
+  subcategories:
+    - name: Rent # 51
+      nature: MUST
+    - name: Mortgage # 52
+      nature: MUST
+    - name: Utilities # 53
+      nature: MUST
+    - name: Furniture # 54
+      nature: NEED

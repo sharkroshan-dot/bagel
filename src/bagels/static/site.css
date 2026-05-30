@@ -1,0 +1,300 @@
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+header {
+  padding: 2rem;
+  background: #111827;
+  border-bottom: 1px solid #334155;
+}
+
+header h1 {
+  margin: 0 0 0.3rem;
+  font-size: clamp(2rem, 3vw, 2.75rem);
+}
+
+header p {
+  margin: 0;
+  color: #94a3b8;
+}
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.panel {
+  background: #111827;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 1.5rem;
+}
+
+.panel h2 {
+  margin-top: 0;
+  color: #f8fafc;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+td,
+th {
+  text-align: left;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #334155;
+}
+
+th {
+  color: #cbd5e1;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.card {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 1.1rem;
+}
+
+.card h3 {
+  margin: 0 0 0.5rem;
+}
+
+.empty {
+  color: #94a3b8;
+}
+
+.create-form {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1rem;
+  max-width: 560px;
+}
+
+.create-form label {
+  display: grid;
+  gap: 0.3rem;
+  color: #cbd5e1;
+  font-size: 0.95rem;
+}
+
+.create-form input,
+.create-form select {
+  width: 100%;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+}
+
+.checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkbox-label input {
+  width: auto;
+}
+
+.create-form button {
+  width: fit-content;
+  border: 1px solid #1d4ed8;
+  background: #2563eb;
+  color: #f8fafc;
+  border-radius: 10px;
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+}
+
+.row-editor {
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 0.75rem;
+  margin-top: 0.7rem;
+  background: #0f172a;
+}
+
+.row-editor summary {
+  cursor: pointer;
+  color: #e2e8f0;
+}
+
+.create-toggle summary {
+  font-weight: 600;
+}
+
+.inline-form {
+  margin-top: 0.8rem;
+}
+
+.inline-delete {
+  margin-top: 0.7rem;
+}
+
+.danger {
+  border-color: #7f1d1d !important;
+  background: #b91c1c !important;
+}
+
+td .row-editor {
+  margin-top: 0;
+}
+
+.update-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 9999;
+}
+
+.update-modal-card {
+  width: min(680px, 95vw);
+  max-height: 90vh;
+  overflow: auto;
+  background: #111827;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.update-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.search-form {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  margin-bottom: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.search-form input {
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  min-width: 280px;
+}
+
+.search-form button {
+  border: 1px solid #1d4ed8;
+  background: #2563eb;
+  color: #f8fafc;
+  border-radius: 10px;
+  padding: 0.55rem 0.8rem;
+  cursor: pointer;
+}
+
+.clear-link {
+  color: #93c5fd;
+  text-decoration: none;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #1d4ed8;
+  background: #2563eb;
+  color: #f8fafc;
+  border-radius: 10px;
+  padding: 0.65rem 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.notification {
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 1rem;
+  color: #e2e8f0;
+}
+
+.notification.success {
+  background: #0f5132;
+  border: 1px solid #198754;
+}
+
+.notification.error {
+  background: #4c1d1d;
+  border: 1px solid #b91c1c;
+}
+
+.record-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin: 1rem 0 0.8rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.dashboard-card {
+  padding: 1.25rem;
+  background: #0b1120;
+}
+
+.dashboard-card .metric {
+  font-size: 1.85rem;
+  margin: 0.35rem 0 0;
+  color: #f8fafc;
+}
+
+.dashboard-card .label {
+  color: #94a3b8;
+  margin: 0.5rem 0 0;
+}
+
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .create-form,
+  .search-form {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .search-form input,
+  .search-form button,
+  .create-form button,
+  .button {
+    width: 100%;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}

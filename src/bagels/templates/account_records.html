@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ account.name }} Records - Bagels Web</title>
+    <link rel="stylesheet" href="/static/site.css" />
+  </head>
+  <body>
+    <header>
+      <h1>{{ account.name }} Records</h1>
+      <p>All records for this account.</p>
+    </header>
+    <main class="app">
+      <section class="panel">
+        <p><a href="/" class="clear-link">Back to Dashboard</a></p>
+        <h2>Account Details</h2>
+        <p><strong>Name:</strong> {{ account.name }}</p>
+        <p><strong>Description:</strong> {{ account.description or '-' }}</p>
+        <p><strong>Balance:</strong> {{ account.balance }}</p>
+      </section>
+
+      <section class="panel">
+        <h2>Records</h2>
+        {% if records %}
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Label</th>
+              <th>Category</th>
+              <th>Amount</th>
+              <th>Type</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for record in records %}
+            <tr>
+              <td>{{ record.date }}</td>
+              <td>{{ record.label }}</td>
+              <td>{{ record.category or '-' }}</td>
+              <td>{{ record.amount }}</td>
+              <td>{{ 'Income' if record.isIncome else 'Expense' }}</td>
+              <td>
+                <button type="button" onclick="openUpdateModal('update-modal-{{ record.id }}')">Update</button>
+                <form method="post" action="/records/delete" class="inline-delete">
+                  <input type="hidden" name="id" value="{{ record.id }}" />
+                  <input type="hidden" name="return_to" value="/accounts/{{ account.id }}/records" />
+                  <button type="submit" class="danger">Delete</button>
+                </form>
+
+                <div class="update-modal" id="update-modal-{{ record.id }}" aria-hidden="true">
+                  <div class="update-modal-card">
+                    <div class="update-modal-head">
+                      <strong>Update Record #{{ record.id }}</strong>
+                      <button type="button" onclick="closeUpdateModal('update-modal-{{ record.id }}')">Close</button>
+                    </div>
+                    <form method="post" action="/records/update" class="create-form inline-form">
+                      <input type="hidden" name="id" value="{{ record.id }}" />
+                      <input type="hidden" name="return_to" value="/accounts/{{ account.id }}/records" />
+                      <label>Label <input type="text" name="label" value="{{ record.label }}" required /></label>
+                      <label>Amount <input type="number" name="amount" min="0.01" step="0.01" value="{{ record.amount }}" required /></label>
+                      <label>Date <input type="date" name="date" value="{{ record.date }}" /></label>
+                      <label>Account
+                        <select name="accountId" required>
+                          {% for acc in all_accounts %}
+                          <option value="{{ acc.id }}" {% if acc.id == record.accountId %}selected{% endif %}>{{ acc.name }}</option>
+                          {% endfor %}
+                        </select>
+                      </label>
+                      <label>Category
+                        <select name="categoryId">
+                          <option value="">No category</option>
+                          {% for category in categories %}
+                          <option value="{{ category.id }}" {% if category.id == record.categoryId %}selected{% endif %}>{{ category.name }}</option>
+                          {% endfor %}
+                        </select>
+                      </label>
+                      <label class="checkbox-label"><input type="checkbox" name="isIncome" {% if record.isIncome %}checked{% endif %} /> Income record</label>
+                      <button type="submit">Save</button>
+                    </form>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="empty">No records available for this account.</p>
+        {% endif %}
+      </section>
+    </main>
+    <script>
+      function openUpdateModal(id) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.display = "flex";
+          el.setAttribute("aria-hidden", "false");
+        }
+      }
+      function closeUpdateModal(id) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.display = "none";
+          el.setAttribute("aria-hidden", "true");
+        }
+      }
+    </script>
+  </body>
+</html>

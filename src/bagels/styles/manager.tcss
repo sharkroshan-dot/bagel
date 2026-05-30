@@ -1,0 +1,34 @@
+.h {
+  .manager-modules-container {
+    layout: horizontal;
+  
+    & > Container {
+      height: 1fr;
+    }
+
+    .right {
+      width: 50;
+    }
+  }
+}
+
+.v {
+  .manager-modules-container {
+    layout: vertical;
+
+    .left {
+      height: 65%;
+    }
+
+    .right {
+      height: 1fr;
+      layout: horizontal;
+    }
+  }
+}
+
+.manager-modules-container {
+  height: 1fr;
+  width: 1fr;
+  padding: 0 2 1 2;
+}

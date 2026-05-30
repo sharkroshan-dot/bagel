@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bagels Web</title>
+    <link rel="stylesheet" href="/static/site.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Bagels Web</h1>
+      <p>Manage accounts, categories, and records from your browser.</p>
+    </header>
+    <main class="app">
+      <section class="panel dashboard-panel">
+        <h2>Dashboard Summary</h2>
+        <div class="dashboard-grid">
+          <article class="card dashboard-card">
+            <h3>This Week</h3>
+            <p class="metric">{{ dashboard.week_spend }}</p>
+            <p class="label">Expenses</p>
+          </article>
+          <article class="card dashboard-card">
+            <h3>This Month</h3>
+            <p class="metric">{{ dashboard.month_spend }}</p>
+            <p class="label">Expenses</p>
+          </article>
+          <article class="card dashboard-card">
+            <h3>Net Flow</h3>
+            <p class="metric">{{ dashboard.net_flow }}</p>
+            <p class="label">Income − Expenses</p>
+          </article>
+          <article class="card dashboard-card">
+            <h3>Top Category</h3>
+            <p class="metric">{{ dashboard.top_category or '—' }}</p>
+            <p class="label">Highest spend this month</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="accounts-section">
+        <h2>Accounts</h2>
+        <form method="get" action="/#accounts-section" class="search-form">
+          <input
+            type="text"
+            name="account_q"
+            placeholder="Search accounts"
+            value="{{ account_query or '' }}"
+          />
+          <input type="hidden" name="category_q" value="{{ category_query or '' }}" />
+          <input type="hidden" name="record_q" value="{{ record_query or '' }}" />
+          {% if selected_account_id %}
+          <input type="hidden" name="account_id" value="{{ selected_account_id }}" />
+          {% endif %}
+          <button type="submit">Search</button>
+          {% if account_query %}
+          <a href="/?category_q={{ category_query or '' }}&record_q={{ record_query or '' }}{% if selected_account_id %}&account_id={{ selected_account_id }}{% endif %}#accounts-section" class="clear-link">Clear</a>
+          {% endif %}
+        </form>
+        {% if selected_account %}
+        <p class="empty">Managing account: <strong>{{ selected_account.name }}</strong></p>
+        {% endif %}
+        <details class="row-editor create-toggle">
+          <summary>Create Account</summary>
+          <form method="post" action="/accounts/create" class="create-form inline-form">
+            <input type="hidden" name="return_account_id" value="{{ selected_account_id or '' }}" />
+            <label>Name <input type="text" name="name" required /></label>
+            <label>Description <input type="text" name="description" /></label>
+            <label>Beginning Balance <input type="number" name="beginningBalance" step="0.01" value="0" required /></label>
+            <button type="submit">Create Account</button>
+          </form>
+        </details>
+        {% if accounts %}
+        <div class="card-grid">
+          {% for account in accounts %}
+          <article class="card">
+            <h3>
+              <a href="/accounts/{{ account.id }}/records" class="clear-link">
+                {{ account.name }}
+              </a>
+            </h3>
+            <p>{{ account.description or 'No description' }}</p>
+            <strong>Balance:</strong> {{ account.balance }}
+          </article>
+          {% endfor %}
+        </div>
+        {% else %}
+        {% if account_query %}
+        <p class="empty">No accounts match your search.</p>
+        {% else %}
+        <p class="empty">No accounts available yet.</p>
+        {% endif %}
+        {% endif %}
+      </section>
+
+      <section class="panel" id="categories-section">
+        <h2>Categories</h2>
+        <form method="get" action="/#categories-section" class="search-form">
+          <input
+            type="text"
+            name="category_q"
+            placeholder="Search categories"
+            value="{{ category_query or '' }}"
+          />
+          <input type="hidden" name="account_q" value="{{ account_query or '' }}" />
+          <input type="hidden" name="record_q" value="{{ record_query or '' }}" />
+          {% if selected_account_id %}
+          <input type="hidden" name="account_id" value="{{ selected_account_id }}" />
+          {% endif %}
+          <button type="submit">Search</button>
+          {% if category_query %}
+          <a href="/?account_q={{ account_query or '' }}&record_q={{ record_query or '' }}{% if selected_account_id %}&account_id={{ selected_account_id }}{% endif %}#categories-section" class="clear-link">Clear</a>
+          {% endif %}
+        </form>
+        <details class="row-editor create-toggle">
+          <summary>Create Category</summary>
+          <form method="post" action="/categories/create" class="create-form inline-form">
+            <input type="hidden" name="return_account_id" value="{{ selected_account_id or '' }}" />
+            <label>Name <input type="text" name="name" required /></label>
+            <label>Nature
+              <select name="nature" required>
+                {% for nature in nature_options %}
+                <option value="{{ nature }}">{{ nature }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>Color (e.g. blue) <input type="text" name="color" required /></label>
+            <label>Parent Category
+              <select name="parentCategoryId">
+                <option value="">No parent</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <button type="submit">Create Category</button>
+          </form>
+        </details>
+        {% if categories %}
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Nature</th>
+              <th>Parent</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for category in categories %}
+            <tr>
+              <td>{{ category.name }}</td>
+              <td>{{ category.nature }}</td>
+              <td>{{ category.parent or '-' }}</td>
+              <td>
+                <button type="button" onclick="openCategoryModal('category-modal-{{ category.id }}')">Update</button>
+                <form method="post" action="/categories/delete" class="inline-delete">
+                  <input type="hidden" name="id" value="{{ category.id }}" />
+                  <input type="hidden" name="return_account_id" value="{{ selected_account_id or '' }}" />
+                  <button type="submit" class="danger">Delete</button>
+                </form>
+                <div class="update-modal" id="category-modal-{{ category.id }}" aria-hidden="true">
+                  <div class="update-modal-card">
+                    <div class="update-modal-head">
+                      <strong>Update Category #{{ category.id }}</strong>
+                      <button type="button" onclick="closeCategoryModal('category-modal-{{ category.id }}')">Close</button>
+                    </div>
+                    <form method="post" action="/categories/update" class="create-form inline-form">
+                      <input type="hidden" name="id" value="{{ category.id }}" />
+                      <input type="hidden" name="return_account_id" value="{{ selected_account_id or '' }}" />
+                      <label>Name <input type="text" name="name" value="{{ category.name }}" required /></label>
+                      <label>Nature
+                        <select name="nature" required>
+                          {% for nature in nature_options %}
+                          <option value="{{ nature }}" {% if nature == category.natureKey %}selected{% endif %}>{{ nature }}</option>
+                          {% endfor %}
+                        </select>
+                      </label>
+                      <label>Color <input type="text" name="color" value="{{ category.color }}" required /></label>
+                      <label>Parent Category
+                        <select name="parentCategoryId">
+                          <option value="">No parent</option>
+                          {% for cat in categories %}
+                          {% if cat.id != category.id %}
+                          <option value="{{ cat.id }}" {% if cat.id == category.parentId %}selected{% endif %}>{{ cat.name }}</option>
+                          {% endif %}
+                          {% endfor %}
+                        </select>
+                      </label>
+                      <button type="submit">Save</button>
+                    </form>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        {% if category_query %}
+        <p class="empty">No categories match your search.</p>
+        {% else %}
+        <p class="empty">No categories available yet.</p>
+        {% endif %}
+        {% endif %}
+      </section>
+
+      <section class="panel" id="records-section">
+        <h2>Recent Records</h2>
+        <form method="get" action="/#records-section" class="search-form">
+          <input
+            type="text"
+            name="record_q"
+            placeholder="Search records"
+            value="{{ record_query or '' }}"
+          />
+          <input type="hidden" name="account_q" value="{{ account_query or '' }}" />
+          <input type="hidden" name="category_q" value="{{ category_query or '' }}" />
+          {% if selected_account_id %}
+          <input type="hidden" name="account_id" value="{{ selected_account_id }}" />
+          {% endif %}
+          <button type="submit">Search</button>
+          {% if record_query %}
+          <a href="/?account_q={{ account_query or '' }}&category_q={{ category_query or '' }}{% if selected_account_id %}&account_id={{ selected_account_id }}{% endif %}#records-section" class="clear-link">Clear</a>
+          {% endif %}
+        </form>
+        <details class="row-editor create-toggle">
+          <summary>Create Record</summary>
+          <form method="post" action="/records/create" class="create-form inline-form">
+            <input type="hidden" name="return_account_id" value="{{ selected_account_id or '' }}" />
+            <label>Label <input type="text" name="label" required /></label>
+            <label>Amount <input type="number" name="amount" min="0.01" step="0.01" required /></label>
+            <label>Date <input type="date" name="date" /></label>
+            <label>Account
+              <select name="accountId" required>
+                <option value="">Select account</option>
+                {% for account in all_accounts %}
+                <option value="{{ account.id }}" {% if selected_account_id == account.id %}selected{% endif %}>{{ account.name }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>Category
+              <select name="categoryId">
+                <option value="">No category</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label class="checkbox-label"><input type="checkbox" name="isIncome" /> Income record</label>
+            <button type="submit">Create Record</button>
+          </form>
+        </details>
+        {% if imported_flag %}
+        <div class="notification success">Imported {{ imported_flag }} records successfully.</div>
+        {% endif %}
+        {% if import_error %}
+        <div class="notification error">Import error: {{ import_error }}</div>
+        {% endif %}
+        <div class="record-actions">
+          <a href="/records/export" class="button">Export all records</a>
+          <a href="/reports/categories/export" class="button">Export category report</a>
+        </div>
+        <details class="row-editor create-toggle">
+          <summary>Import Records from CSV</summary>
+          <form method="post" action="/records/import" enctype="multipart/form-data" class="create-form inline-form">
+            <label>CSV file <input type="file" name="records_csv" accept=".csv" required /></label>
+            <p class="hint">Expected columns: date,label,amount,account,category,isIncome</p>
+            <button type="submit">Upload CSV</button>
+          </form>
+        </details>
+        {% if records %}
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Label</th>
+              <th>Account</th>
+              <th>Category</th>
+              <th>Amount</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for record in records %}
+            <tr>
+              <td>{{ record.date }}</td>
+              <td>{{ record.label }}</td>
+              <td>
+                {% if record.accountId and record.account %}
+                <a href="/accounts/{{ record.accountId }}/records" class="clear-link">{{ record.account }}</a>
+                {% else %}
+                {{ record.account or '-' }}
+                {% endif %}
+              </td>
+              <td>{{ record.category or '-' }}</td>
+              <td>{{ record.amount }}</td>
+              <td>{{ 'Income' if record.isIncome else 'Expense' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        {% if record_query %}
+        <p class="empty">No records match your search.</p>
+        {% else %}
+        <p class="empty">No records available yet.</p>
+        {% endif %}
+        {% endif %}
+      </section>
+
+      {% if deleted_records %}
+      <section class="panel" id="trash-section">
+        <h2>Recently Deleted Records</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Label</th>
+              <th>Account</th>
+              <th>Category</th>
+              <th>Amount</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for record in deleted_records %}
+            <tr>
+              <td>{{ record.date }}</td>
+              <td>{{ record.label }}</td>
+              <td>{{ record.account or '-' }}</td>
+              <td>{{ record.category or '-' }}</td>
+              <td>{{ record.amount }}</td>
+              <td>
+                <form method="post" action="/records/restore" class="inline-form">
+                  <input type="hidden" name="id" value="{{ record.id }}" />
+                  <button type="submit">Restore</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+      {% endif %}
+
+      <section class="panel" id="manage-categories">
+        <h2>Manage Categories</h2>
+        {% if categories %}
+          {% for category in categories %}
+          <details class="row-editor">
+            <summary>#{{ category.id }} {{ category.name }} ({{ category.nature }})</summary>
+            <form method="post" action="/categories/update" class="create-form inline-form">
+              <input type="hidden" name="id" value="{{ category.id }}" />
+              <input type="hidden" name="return_account_id" value="{{ selected_account_id or '' }}" />
+              <label>Name <input type="text" name="name" value="{{ category.name }}" required /></label>
+              <label>Nature
+                <select name="nature" required>
+                  {% for nature in nature_options %}
+                  <option value="{{ nature }}" {% if nature == category.natureKey %}selected{% endif %}>{{ nature }}</option>
+                  {% endfor %}
+                </select>
+              </label>
+              <label>Color <input type="text" name="color" value="{{ category.color }}" required /></label>
+              <label>Parent Category
+                <select name="parentCategoryId">
+                  <option value="">No parent</option>
+                  {% for cat in categories %}
+                  {% if cat.id != category.id %}
+                  <option value="{{ cat.id }}" {% if cat.id == category.parentId %}selected{% endif %}>{{ cat.name }}</option>
+                  {% endif %}
+                  {% endfor %}
+                </select>
+              </label>
+              <button type="submit">Update Category</button>
+            </form>
+            <form method="post" action="/categories/delete" class="inline-delete">
+              <input type="hidden" name="id" value="{{ category.id }}" />
+              <input type="hidden" name="return_account_id" value="{{ selected_account_id or '' }}" />
+              <button type="submit" class="danger">Delete Category</button>
+            </form>
+          </details>
+          {% endfor %}
+        {% else %}
+        <p class="empty">No categories available yet.</p>
+        {% endif %}
+      </section>
+
+      <section class="panel" id="manage-records">
+        <h2>Manage Records</h2>
+        {% if records %}
+          {% for record in records %}
+          <details class="row-editor">
+            <summary>#{{ record.id }} {{ record.date }} - {{ record.label }} ({{ record.amount }})</summary>
+            <form method="post" action="/records/update" class="create-form inline-form">
+              <input type="hidden" name="id" value="{{ record.id }}" />
+              <input type="hidden" name="return_account_id" value="{{ selected_account_id or '' }}" />
+              <label>Label <input type="text" name="label" value="{{ record.label }}" required /></label>
+              <label>Amount <input type="number" name="amount" min="0.01" step="0.01" value="{{ record.amount }}" required /></label>
+              <label>Date <input type="date" name="date" value="{{ record.date }}" /></label>
+              <label>Account
+                <select name="accountId" required>
+                  {% for account in all_accounts %}
+                  <option value="{{ account.id }}" {% if account.name == record.account %}selected{% endif %}>{{ account.name }}</option>
+                  {% endfor %}
+                </select>
+              </label>
+              <label>Category
+                <select name="categoryId">
+                  <option value="">No category</option>
+                  {% for category in categories %}
+                  <option value="{{ category.id }}" {% if category.name == record.category %}selected{% endif %}>{{ category.name }}</option>
+                  {% endfor %}
+                </select>
+              </label>
+              <label class="checkbox-label"><input type="checkbox" name="isIncome" {% if record.isIncome %}checked{% endif %} /> Income record</label>
+              <button type="submit">Update Record</button>
+            </form>
+            <form method="post" action="/records/delete" class="inline-delete">
+              <input type="hidden" name="id" value="{{ record.id }}" />
+              <input type="hidden" name="return_account_id" value="{{ selected_account_id or '' }}" />
+              <button type="submit" class="danger">Delete Record</button>
+            </form>
+          </details>
+          {% endfor %}
+        {% else %}
+        <p class="empty">No records available yet.</p>
+        {% endif %}
+      </section>
+    </main>
+    <script>
+      function openCategoryModal(id) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.display = "flex";
+          el.setAttribute("aria-hidden", "false");
+        }
+      }
+      function closeCategoryModal(id) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.display = "none";
+          el.setAttribute("aria-hidden", "true");
+        }
+      }
+
+      const savedSearchKeys = ["account_q", "category_q", "record_q"];
+      savedSearchKeys.forEach((key) => {
+        const element = document.querySelector(`[name="${key}"]`);
+        if (!element) return;
+        const storageKey = `bagels.${key}`;
+        if (localStorage.getItem(storageKey)) {
+          element.value = localStorage.getItem(storageKey);
+        }
+        element.addEventListener("change", (event) => {
+          localStorage.setItem(storageKey, event.target.value || "");
+        });
+      });
+    </script>
+  </body>
+</html>

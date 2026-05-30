@@ -1,0 +1,104 @@
+# Sample accounts
+accounts:
+  - name: Bank
+    description: ""
+    beginningBalance: 5000.00
+    repaymentDate: null
+
+  - name: Card
+    description: ""
+    beginningBalance: 100
+    repaymentDate: null
+
+# Sample people for splits
+people:
+  - name: John
+  - name: Sarah
+  - name: Mike
+
+records:
+  - label: Bagels
+    amount: 2.50
+    accountId: 2
+    categoryId: 5 # Food & Drinks -> Snacks
+    isIncome: false
+    isTransfer: false
+    date: 2024-11-17T00:00:00Z
+  - label: Home -> School
+    amount: 10.00
+    accountId: 3
+    categoryId: 7 # Transport -> Public Transport
+    isIncome: false
+    isTransfer: false
+    date: 2024-11-17T00:00:00Z
+  - label: Lunch with John
+    amount: 35.00
+    accountId: 2
+    categoryId: 3 # Food & Drinks -> Restaurants
+    isIncome: false
+    isTransfer: false
+    date: 2024-11-17T00:00:00Z
+    splits:
+      - personId: 1
+        amount: 20
+  - label: School -> Home
+    amount: 10.00
+    accountId: 3
+    categoryId: 7 # Transport -> Public Transport
+    isIncome: false
+    isTransfer: false
+    date: 2024-11-17T00:00:00Z
+  - label: Monthly Rent
+    amount: 1200.00
+    accountId: 2
+    categoryId: 51 # Housing -> Rent
+    isIncome: false
+    isTransfer: false
+    date: 2024-11-18T00:00:00Z
+  - label: Buying bagels for mom
+    amount: 12
+    accountId: 1 # Outside wallet
+    transferToAccountId: 2
+    isTransfer: true
+    isIncome: false
+    date: 2024-11-18T00:00:00Z
+  - label: Dinner with Sarah
+    amount: 50.00
+    accountId: 2
+    categoryId: 3 # Food & Drinks -> Restaurants
+    isIncome: false
+    isTransfer: false
+    date: 2024-11-18T00:00:00Z
+    splits:
+      - personId: 2
+        amount: 25
+  - label: Wage pay
+    amount: 1200
+    accountId: 2
+    categoryId: 36 # Income -> Salary
+    isIncome: true
+    date: 2024-11-18T00:00:00Z
+    isTransfer: false
+
+# Sample record templates for recurring transactions
+record_templates:
+  - label: Home->Uni
+    amount: 10.00
+    accountId: 3
+    categoryId: 7 # Transport -> Public Transport
+    isIncome: false
+    isTransfer: false
+
+  - label: Monthly Rent
+    amount: 1200.00
+    accountId: 1
+    categoryId: 51 # Housing -> Rent
+    isIncome: false
+    isTransfer: false
+
+  - label: Netflix Subscription
+    amount: 15.99
+    accountId: 2
+    categoryId: 18 # Electronic & Communication -> Streaming Services
+    isIncome: false
+    isTransfer: false
