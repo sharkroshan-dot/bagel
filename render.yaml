@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: bagels
+    env: python
+    pythonVersion: 3.13
+    plan: free
+    buildCommand: pip install uv && uv pip compile pyproject.toml -o requirements.txt && pip install -r requirements.txt
+    startCommand: python -m bagels.web --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13
