@@ -1,11 +1,12 @@
 services:
   - type: web
     name: bagels
-    env: python
-    pythonVersion: 3.13
+    env: docker
     plan: free
-    buildCommand: pip install .
-    startCommand: python -m bagels.web --host 0.0.0.0 --port $PORT
+    dockerfilePath: Dockerfile
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.13
+      - key: TTYD_CREDENTIALS
+        value: admin:admin
+    disk:
+      name: bagels-data
+      size_gb: 1
