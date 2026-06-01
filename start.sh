@@ -2,8 +2,26 @@
 set -e
 
 echo "==> Downloading ttyd binary..."
-curl -L https://github.com/tsl0922/ttyd/releases/download/1.8.3/ttyd.x86_64 -o /tmp/ttyd
-chmod +x /tmp/ttyd
+# Try downloading from GitHub releases with better fallback
+TTYD_URL="https://github.com/tsl0922/ttyd/releases/download/1.7.0/ttyd.x86_64"
+TTYD_PATH="/tmp/ttyd"
+
+# Download with verbose output
+if ! curl -fL "$TTYD_URL" -o "$TTYD_PATH" 2>&1; then
+    echo "==> Failed to download ttyd from $TTYD_URL"
+    echo "==> Attempting alternative download..."
+    # Fallback: Try a different mirror or version
+    curl -fL "https://github.com/tsl0922/ttyd/releases/download/1.6.3/ttyd.x86_64" -o "$TTYD_PATH"
+fi
+
+# Verify download is a valid binary
+if ! file "$TTYD_PATH" | grep -q "ELF\|executable"; then
+    echo "==> Downloaded file is not a valid binary, retrying..."
+    rm -f "$TTYD_PATH"
+    curl -fL "https://github.com/tsl0922/ttyd/releases/download/1.6.3/ttyd.x86_64" -o "$TTYD_PATH"
+fi
+
+chmod +x "$TTYD_PATH"
 
 echo "==> Starting Bagels TUI via ttyd..."
-exec /tmp/ttyd -p ${PORT:-8080} -c ${TTYD_CREDENTIALS:-admin:admin} --watch=false python -m bagels --at /data
+exec "$TTYD_PATH" -p ${PORT:-8080} -c ${TTYD_CREDENTIALS:-admin:admin} --watch=false python -m bagels --at /data
