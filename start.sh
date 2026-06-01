@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DATA_DIR="/data"
+DATA_DIR="/tmp/data"
 
 echo "==> Downloading ttyd binary..."
 # Try downloading from GitHub releases with better fallback
@@ -28,6 +28,13 @@ chmod +x "$TTYD_PATH"
 echo "==> Ensuring data directory exists: $DATA_DIR"
 mkdir -p "$DATA_DIR"
 chmod 0777 "$DATA_DIR" || true
+
+if [ ! -w "$DATA_DIR" ]; then
+  echo "==> /tmp/data is not writable; falling back to local ./data"
+  DATA_DIR="$(pwd)/data"
+  mkdir -p "$DATA_DIR"
+  chmod 0777 "$DATA_DIR" || true
+fi
 
 echo "==> Starting Bagels TUI via ttyd..."
 exec "$TTYD_PATH" -p "${PORT:-8080}" -c "${TTYD_CREDENTIALS:-admin:admin}" --watch=false python -m bagels --at "$DATA_DIR"
