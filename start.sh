@@ -1,5 +1,7 @@
-﻿#!/bin/bash
-set -e
+﻿#!/usr/bin/env bash
+set -euo pipefail
+
+DATA_DIR="/app/data"
 
 echo "==> Downloading ttyd binary..."
 # Try downloading from GitHub releases with better fallback
@@ -23,8 +25,9 @@ fi
 
 chmod +x "$TTYD_PATH"
 
-# Ensure /data directory exists for persistent storage
-mkdir -p /data
+echo "==> Ensuring data directory exists: $DATA_DIR"
+mkdir -p "$DATA_DIR"
+chmod 0777 "$DATA_DIR" || true
 
 echo "==> Starting Bagels TUI via ttyd..."
-exec "$TTYD_PATH" -p ${PORT:-8080} -c ${TTYD_CREDENTIALS:-admin:admin} --watch=false python -m bagels --at /data
+exec "$TTYD_PATH" -p "${PORT:-8080}" -c "${TTYD_CREDENTIALS:-admin:admin}" --watch=false python -m bagels --at "$DATA_DIR"

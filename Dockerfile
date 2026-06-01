@@ -3,6 +3,8 @@ FROM python:3.13-slim
 ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
+RUN mkdir -p /app/data && chmod 0777 /app/data
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ttyd ca-certificates \
     && rm -rf /var/lib/apt/lists/*
