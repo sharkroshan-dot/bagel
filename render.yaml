@@ -5,7 +5,7 @@ services:
     pythonVersion: 3.13
     plan: free
     buildCommand: pip install .
-    startCommand: curl -L https://github.com/tsl0922/ttyd/releases/download/1.8.3/ttyd.x86_64 -o /tmp/ttyd && chmod +x /tmp/ttyd && /tmp/ttyd -p $PORT -c ${TTYD_CREDENTIALS:-admin:admin} --watch=false python -m bagels --at /data
+    startCommand: bash start.sh
     envVars:
       - key: TTYD_CREDENTIALS
         value: admin:admin
