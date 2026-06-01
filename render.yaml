@@ -11,5 +11,5 @@ services:
         value: admin:admin
     disk:
       name: bagels-data
-      mountPath: /app/data
+      mountPath: /data
       size_gb: 1

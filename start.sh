@@ -1,7 +1,7 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 set -euo pipefail
 
-DATA_DIR="/app/data"
+DATA_DIR="/data"
 
 echo "==> Downloading ttyd binary..."
 # Try downloading from GitHub releases with better fallback
