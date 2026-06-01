@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 set -e
 
 echo "==> Downloading ttyd binary..."
@@ -22,6 +22,9 @@ if ! file "$TTYD_PATH" | grep -q "ELF\|executable"; then
 fi
 
 chmod +x "$TTYD_PATH"
+
+# Ensure /data directory exists for persistent storage
+mkdir -p /data
 
 echo "==> Starting Bagels TUI via ttyd..."
 exec "$TTYD_PATH" -p ${PORT:-8080} -c ${TTYD_CREDENTIALS:-admin:admin} --watch=false python -m bagels --at /data
